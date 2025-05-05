@@ -9,6 +9,7 @@ export const state = {
     recipePerPage: 10,
     page: 1,
   },
+  bookMark: [],
 };
 
 export const loadRecipe = async function (id) {
@@ -25,6 +26,11 @@ export const loadRecipe = async function (id) {
       ingredients: recipe.ingredients,
       cookingTime: recipe.cooking_time,
     };
+    if (state.bookMark.some(bookmark => bookmark.id === id)) {
+      state.recipe.bookMarked = true;
+    } else {
+      state.recipe.bookMarked = false;
+    }
   } catch (err) {
     throw err;
   }
@@ -53,4 +59,27 @@ export const paginationResult = function (curPage = state.search.page) {
   const fristIndex = (curPage - 1) * state.search.recipePerPage;
   const lastIndex = curPage * state.search.recipePerPage;
   return state.search.results.slice(fristIndex, lastIndex);
+};
+
+export const updateServing = function (newSurvings) {
+  state.recipe.ingredients.forEach(ingr => {
+    ingr.quantity = (ingr.quantity * newSurvings) / state.recipe.servings;
+  });
+  state.recipe.servings = newSurvings;
+};
+
+export const bookMark = function (recipe) {
+  //  add bookMark
+  state.bookMark.push(recipe);
+  // marked current recipe as book mark
+  if (recipe.id === state.recipe.id) state.recipe.bookMarked = true;
+};
+
+export const deleteBookMark = function (id) {
+  const index = state.bookMark.findIndex(recipe => recipe.id === id);
+
+  // delete the recipe from the bookmark
+  state.bookMark.splice(index, 1);
+  // marked current recipe is not bookMark
+  if (id === state.recipe.id) state.recipe.bookMarked = false;
 };

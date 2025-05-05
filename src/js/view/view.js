@@ -11,6 +11,27 @@ export default class view {
     this.clear();
     this._parentEl.insertAdjacentHTML('afterbegin', markup);
   }
+  update(data) {
+    this._data = data;
+    const newMarkup = this._generateMarkup();
+    const newDom = document.createRange().createContextualFragment(newMarkup);
+    const newElement = Array.from(newDom.querySelectorAll('*'));
+    const curMarkup = Array.from(this._parentEl.querySelectorAll('*'));
+    newElement.forEach((newEle, i) => {
+      const curEl = curMarkup[i];
+      if (
+        !newEle.isEqualNode(curEl) &&
+        newEle.firstChild?.nodeValue.trim() !== ''
+      ) {
+        curEl.textContent = newEle.textContent;
+      }
+      if (!newEle.isEqualNode(curEl)) {
+        Array.from(newEle.attributes).forEach(attr => {
+          curEl.setAttribute(attr.name, attr.value);
+        });
+      }
+    });
+  }
   renderError(message = this._errorMessage) {
     const errorMarkup = `
         <div class="error">
