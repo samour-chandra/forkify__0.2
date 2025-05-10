@@ -68,11 +68,19 @@ export const updateServing = function (newSurvings) {
   state.recipe.servings = newSurvings;
 };
 
+const saveData = function () {
+  localStorage.setItem('bookMarks', JSON.stringify(state.bookMark));
+};
+
 export const bookMark = function (recipe) {
   //  add bookMark
   state.bookMark.push(recipe);
   // marked current recipe as book mark
   if (recipe.id === state.recipe.id) state.recipe.bookMarked = true;
+  console.log(state.bookMark);
+
+  // save data in the server
+  saveData();
 };
 
 export const deleteBookMark = function (id) {
@@ -82,4 +90,14 @@ export const deleteBookMark = function (id) {
   state.bookMark.splice(index, 1);
   // marked current recipe is not bookMark
   if (id === state.recipe.id) state.recipe.bookMarked = false;
+  console.log(state.bookMark);
+  // delete data from the bookMarks
+  saveData();
 };
+
+const init = function () {
+  const stroge = localStorage.getItem('bookMarks');
+  if (stroge) state.bookMark = JSON.parse(stroge);
+};
+
+init();

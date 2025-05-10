@@ -1,13 +1,14 @@
 export default class view {
   _data;
   _errorMessage = 'No recipes found for your query. Please try again!';
-  render(data) {
+  render(data, render = true) {
     if (data.length === 0)
       return this.renderError(
         `We don't have this food right now, sorry. Please try something else`
       );
     this._data = data;
     const markup = this._generateMarkup();
+    if (!render) return markup;
     this.clear();
     this._parentEl.insertAdjacentHTML('afterbegin', markup);
   }
